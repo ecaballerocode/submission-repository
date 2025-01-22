@@ -1,34 +1,74 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+//Componente para los botones
+const Button = ( {onClick, text}) => {
+  return(
+    <div>
+      <button onClick={onClick}>{text}</button>
+    </div>
+  )
+}
+
+//Componente para cada linea de estadisticas
+const StatisticLine = ( {text, value} ) => {
+  return(
+    <div>
+      <tr>
+        <td>{text}: </td>
+        <td>{value}</td>
+      </tr>
+    </div>
+  )
+}
+
+
+//Componente para las estadisticas
+const Statistics = ({ good, neutral, bad, average }) => {
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <StatisticLine text="Good" value={good} />
+      <StatisticLine text="Neutral" value={neutral}/>
+      <StatisticLine text="Bad" value={bad}/>
+      <StatisticLine text="All" value={good + neutral + bad} />
+      <StatisticLine text="Average" value={average / (good + neutral + bad)} />
+      <StatisticLine text="Positive" value={`${good / (good + neutral + bad) * 100}%`} />
+    </div>
+  )
+}
+
+const App = () => {
+  // guarda los clics de cada botón en su propio estado
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+  const [average, setAverage] = useState(0)
+
+  const handleGood = () => {
+    setGood(good + 1)
+    setAverage(average + 1)
+  }
+
+  const handleNeutral = () => {
+    setNeutral(neutral + 1)
+  }
+
+  const handleBad = () => {
+    setBad(bad + 1)
+    setAverage(average - 1)
+  }
+
+  return (
+    <div>
+      <h1>Give Feedback</h1>
+      <Button onClick={handleGood} text="Good"/>
+      <Button onClick={handleNeutral} text="Neutral"/>
+      <Button onClick={handleBad} text="Bad"/>
+      <h1>Statistics</h1>
+      {good + neutral + bad === 0 ? <p>No feedback given</p>
+        : <Statistics good={good} neutral={neutral} bad={bad} average={average} />
+      }
+    </div>
   )
 }
 
